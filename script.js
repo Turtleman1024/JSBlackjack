@@ -3,12 +3,31 @@
     by Turtleman
 */
 
-let dealer ="Turtleman";
-
 let suits = ['Hearts', 'Clubs', 'Diamonds', 'Spades'];
 let values = ['Ace', 'King', 'Queen', 'Jack', 'Ten',
               'Nine', 'Eight', 'Seven', 'Six', 'Five',
               'Four', 'Three', 'Two'];
+
+//textArea will be used to display who wins.
+let textArea = document.getElementById('text-area');
+let newGameButton = document.getElementById('new-game-button');
+let hitButton = document.getElementById('hit-button');
+let stayButton = document.getElementById('stay-button');
+
+//First hide the hit and stay buttons
+hitButton.style.display = 'none';
+stayButton.style.display = 'none';
+
+//Added an event listener for the new game button
+newGameButton.addEventListener('click', function(){
+    textArea.innerHTML = "Who will win!";
+    //Hide the new game button
+    newGameButton.style.display = 'none';
+    //Display the hit and stay button on the same line
+    hitButton.style.display = 'inline';
+    stayButton.style.display = 'inline';
+});
+
 
 //A method that will create a deck of cards
 function createDeck()
