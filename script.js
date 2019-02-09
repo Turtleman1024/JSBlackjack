@@ -20,7 +20,7 @@ let gameStarted  = false,
     gameOver     = false,
     playerWon    = false,
     dealerCards  = [],
-    palyersCards = [],
+    playersCards = [],
     dealerScore  = 0,
     playerScore  = [];
 
@@ -41,8 +41,10 @@ newGameButton.addEventListener('click', function(){
     //Shuffle the deck
     shuffleDeck(deck);
     //Dealer and player cards
-    dealerCards = [getNextCard(), getNextCard()];
-    playerCards = [getNextCard(), getNextCard()];
+    playersCards.push(getNextCard());
+    dealerCards.push(getNextCard());
+    playersCards.push(getNextCard());
+    dealerCards.push(getNextCard());
 
     //Hide the new game button
     newGameButton.style.display = 'none';
@@ -56,7 +58,7 @@ newGameButton.addEventListener('click', function(){
 //A event listener for the hit button
 hitButton.addEventListener('click', function()
 {
-    playerCards.push(getNextCard());
+    playersCards.push(getNextCard());
     checkForEndOfGame();
     showStatus();
 });
@@ -124,7 +126,7 @@ function getNextCard()
 function updateScores()
 {
     dealerScore = getScore(dealerCards);
-    playerScore = getScore(playerCards);
+    playerScore = getScore(playersCards);
 }
 
 //A method that will check if the game is over
@@ -177,18 +179,18 @@ function showStatus()
         return;
     }
 
+    //Deal cards to player
+    let playersCardString = '';
+    for(let index = 0; index < playersCards.length; index++)
+    {
+        playersCardString += getCardString(playersCards[index]) + '\n';
+    }
+
     //Deal cards to dealer
     let dealerCardString = '';
     for(let index = 0; index < dealerCards.length; index++)
     {
         dealerCardString += getCardString(dealerCards[index]) + '\n';
-    }
-
-    //Deal cards to player
-    let playerCardString = '';
-    for(let index = 0; index < playerCards.length; index++)
-    {
-        playerCardString += getCardString(playerCards[index]) + '\n';
     }
 
     updateScores();
@@ -199,7 +201,7 @@ function showStatus()
         '(score: ' + dealerScore + ')\n\n' +
 
         'Player has:\n' +
-        playerCardString + 
+        playersCardString + 
         '(score: ' + playerScore + ')\n\n';
 
     if(gameOver)
