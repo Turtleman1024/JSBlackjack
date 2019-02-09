@@ -3,31 +3,71 @@
     by Turtleman
 */
 
+// Card Variables
 let suits = ['Hearts', 'Clubs', 'Diamonds', 'Spades'];
 let values = ['Ace', 'King', 'Queen', 'Jack', 'Ten',
               'Nine', 'Eight', 'Seven', 'Six', 'Five',
               'Four', 'Three', 'Two'];
 
-//textArea will be used to display who wins.
-let textArea = document.getElementById('text-area');
-let newGameButton = document.getElementById('new-game-button');
-let hitButton = document.getElementById('hit-button');
-let stayButton = document.getElementById('stay-button');
+// DOM Variables
+let textArea = document.getElementById('text-area'),
+    newGameButton = document.getElementById('new-game-button'),
+    hitButton = document.getElementById('hit-button'),
+    stayButton = document.getElementById('stay-button');
 
-//First hide the hit and stay buttons
+// Game variables
+let gameStarted  = false,
+    gameOver     = false,
+    playerWon    = false,
+    dealerCards  = [],
+    palyersCards = [],
+    dealerScore  = 0,
+    playerScore  = [];
+
+//Hide the hit and stay buttons to start out with.
 hitButton.style.display = 'none';
 stayButton.style.display = 'none';
 
 //Added an event listener for the new game button
 newGameButton.addEventListener('click', function(){
-    textArea.innerHTML = "Who will win!";
+    gameStarted = true;
+    gameOver = false;
+    playerWond = false;
+    dealerScore = 0;
+    playerScore = 0;
+
+    //Create a deck of cards
+    deck = createDeck();
+    //Shuffle the deck
+    shuffleDeck(deck);
+    //Dealer and player cards
+    dealerCards = [getNextCard(), getNextCard()];
+    playerCards = [getNextCard(), getNextCard()];
+
     //Hide the new game button
     newGameButton.style.display = 'none';
     //Display the hit and stay button on the same line
     hitButton.style.display = 'inline';
     stayButton.style.display = 'inline';
+
+    showStatus();
 });
 
+//A event listener for the hit button
+hitButton.addEventListener('click', function()
+{
+    playerCards.push(getNextCard());
+    checkForEndOfGame();
+    showStatus();
+});
+
+//A event listener for the stay button
+stayButton.addEventListener('click', function()
+{
+    gameOver= true;
+    checkForEndOfGame();
+    showStatus();
+});
 
 //A method that will create a deck of cards
 function createDeck()
@@ -51,6 +91,23 @@ function createDeck()
     return deck;   
 }
 
+//A method that will shuffle the card deck
+function shuffleDeck(deck)
+{
+    //Loop through the deck
+    for (let index = 0; index < deck.length; index++)
+    {
+        //Get a random card index
+        //Math.random wil' return a decimal number so need to truncate it
+        let swapIndex = Math.trunc(Math.random() * deck.length);
+        //Get the card at the random index
+        let temp = deck[swapIndex];
+        //Swap the cards
+        deck[swapIndex] = deck[index];
+        deck[index] = temp;
+    }
+}
+
 //A method that will return the card string
 function getCardString(card)
 {
@@ -63,12 +120,157 @@ function getNextCard()
     return deck.shift();
 }
 
-//Create a deck of cards
-let deck = createDeck();
+//Update the scores of the game
+function updateScores()
+{
+    dealerScore = getScore(dealerCards);
+    playerScore = getScore(playerCards);
+}
 
-//Assign two cards to a player
-let playerCards = [getNextCard(), getNextCard()];
+//A method that will check if the game is over
+function checkForEndOfGame()
+{
+    updateScores();
 
-//Display the two cards
-console.log(" " + getCardString(playerCards[0]));
-console.log(" "+ getCardString(playerCards[1]));
+    if(gameOver)
+    {
+        //Let dealer take cards
+        while(dealerScore < playerScore && playerScore <= 21 && dealerScore <= 21)
+        {
+            dealerCards.push(getNextCard());
+            updateScores();
+        }
+    }
+
+    if(playerScore >21) 
+    {
+        playerWon = false;
+        gameOver = true;
+    }
+    else if(dealerScore > 21)
+    {
+        playerWon = true;
+        gameOver = true;
+    }
+    else if(gameOver)
+    {
+        if(playerScore > dealerScore)
+        {
+            playerWon = true;
+        }
+        else if(playerScore === dealerScore)
+        {
+            playerWon = false;
+        }
+        else{
+            playerWon = false;
+        }
+    }
+}
+
+//A method that will show the status of the game.
+function showStatus()
+{
+    if(!gameStarted)
+    {
+        textArea.innerHTML = "Who will win!";
+        return;
+    }
+
+    //Deal cards to dealer
+    let dealerCardString = '';
+    for(let index = 0; index < dealerCards.length; index++)
+    {
+        dealerCardString += getCardString(dealerCards[index]) + '\n';
+    }
+
+    //Deal cards to player
+    let playerCardString = '';
+    for(let index = 0; index < playerCards.length; index++)
+    {
+        playerCardString += getCardString(playerCards[index]) + '\n';
+    }
+
+    updateScores();
+
+    textArea.innerText = 
+        'Turtleman has:\n' +
+        dealerCardString +
+        '(score: ' + dealerScore + ')\n\n' +
+
+        'Player has:\n' +
+        playerCardString + 
+        '(score: ' + playerScore + ')\n\n';
+
+    if(gameOver)
+    {
+        if(playerWon)
+        {
+            textArea.innerText += "\nYOU WIN!";
+        }
+        else
+        {
+            textArea.innerText += "\nTURTLEMAN WINS!";
+        }
+        //Unhide the new game button
+        newGameButton.style.display = 'inline';
+        //Hide the hit and stay button on the same line
+        hitButton.style.display = 'none';
+        stayButton.style.display = 'none';
+    }
+}
+
+//Get the cards value
+function getCardNumericValue(card)
+{
+    switch(card.value)
+    {
+        case 'Ace':
+            return 1;
+        case 'Two':
+            return 2;
+        case 'Three':
+            return 3;
+        case 'Four':
+            return 4;
+        case 'Five':
+            return 5;
+        case 'Six':
+            return 6;
+        case 'Seven':
+            return 7;
+        case 'Eight':
+            return 8;
+        case 'Nine':
+            return 9;
+        default:
+            return 10;
+    }
+}
+
+//A method to calculate passed in players score
+function getScore(cardArray)
+{
+    let score = 0;
+    let hasAce = false;
+
+    for(let index = 0; index < cardArray.length; index++)
+    {
+        let card = cardArray[index];
+        score += getCardNumericValue(card);
+        if(card.value === 'Ace')
+        {
+            hasAce = true;
+        }
+    }
+    if(hasAce && score + 10 <= 21)
+    {
+        return score + 10;
+    }
+    return score;
+}
+
+
+
+
+
