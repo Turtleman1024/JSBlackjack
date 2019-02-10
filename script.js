@@ -34,8 +34,6 @@ newGameButton.addEventListener('click', function(){
     if(gameOver)
     {
         deck = [],
-        gameOver = false,
-        gameStarted = false,
         dealerCards = [],
         playersCards = [],
         textArea.innerText = "";
