@@ -22,7 +22,8 @@ let gameStarted  = false,
     dealerCards  = [],
     playersCards = [],
     dealerScore  = 0,
-    playerScore  = [];
+    playerScore  = [],
+    deck         = [];
 
 //Hide the hit and stay buttons to start out with.
 hitButton.style.display = 'none';
@@ -30,6 +31,15 @@ stayButton.style.display = 'none';
 
 //Added an event listener for the new game button
 newGameButton.addEventListener('click', function(){
+    if(gameOver)
+    {
+        deck = [],
+        gameOver = false,
+        gameStarted = false,
+        dealerCards = [],
+        playersCards = [],
+        textArea.innerText = "";
+    }
     gameStarted = true;
     gameOver = false;
     playerWond = false;
