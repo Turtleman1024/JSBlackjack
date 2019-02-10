@@ -19,6 +19,7 @@ let textArea = document.getElementById('text-area'),
 let gameStarted  = false,
     gameOver     = false,
     playerWon    = false,
+    draw         = false,
     dealerCards  = [],
     playersCards = [],
     dealerScore  = 0,
@@ -40,7 +41,8 @@ newGameButton.addEventListener('click', function(){
     }
     gameStarted = true;
     gameOver = false;
-    playerWond = false;
+    playerWon = false;
+    draw = false,
     dealerScore = 0;
     playerScore = 0;
 
@@ -170,7 +172,7 @@ function checkForEndOfGame()
         }
         else if(playerScore === dealerScore)
         {
-            playerWon = false;
+            draw = true;
         }
         else{
             playerWon = false;
@@ -217,6 +219,10 @@ function showStatus()
         if(playerWon)
         {
             textArea.innerText += "\nYOU WIN!";
+        }
+        else if(draw)
+        {
+            textArea.innerText += "\nDraw!"
         }
         else
         {
